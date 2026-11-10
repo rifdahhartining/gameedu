@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Ekonomi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+
+        /* Custom scrollbar for options if needed */
+        .options-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .options-container::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        /* Smooth fade in animation */
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 text-slate-800">
+
+    <div class="w-full max-w-3xl bg-white rounded-2xl shadow-xl overflow-hidden fade-in">
+        
+        <!-- WELCOME SCREEN -->
+        <div id="welcome-screen" class="p-8 sm:p-12 text-center">
+            <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">Kuis Ekonomi Makro</h1>
+            <p class="text-slate-600 mb-8 text-lg">Uji pengetahuan Anda tentang Pendapatan Nasional dan Indikator Ekonomi.</p>
+            <button onclick="startQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-4 focus:ring-blue-300 text-lg">
+                Mulai Kuis
+            </button>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div id="quiz-screen" class="hidden p-8 sm:p-12 flex flex-col min-h-[400px]">
+            <!-- Progress Bar -->
+            <div class="mb-8">
+                <div class="flex justify-between text-sm font-medium text-slate-500 mb-2">
+                    <span id="progress-text">Pertanyaan 1 dari 5</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2.5">
+                    <div id="progress-fill" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 20%"></div>
+                </div>
+            </div>
+
+            <!-- Question -->
+            <h2 id="question-text" class="text-xl sm:text-2xl font-semibold text-slate-800 mb-6 leading-relaxed">
+                <!-- Question will be injected here -->
+            </h2>
+
+            <!-- Options -->
+            <div id="options-container" class="flex flex-col gap-3 mb-6 options-container flex-grow">
+                <!-- Options will be injected here -->
+            </div>
+
+            <!-- Feedback & Next Button Area -->
+            <div class="mt-auto flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100 min-h-[60px]">
+                <div id="feedback-text" class="font-semibold text-lg opacity-0 transition-opacity duration-300">
+                    <!-- Feedback (Benar/Salah) will appear here -->
+                </div>
+                <button id="next-button" onclick="nextQuestion()" class="hidden bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg shadow transition duration-200 focus:outline-none focus:ring-4 focus:ring-blue-300 w-full sm:w-auto">
+                    Selanjutnya
+                </button>
+            </div>
+        </div>
+
+        <!-- RESULT SCREEN -->
+        <div id="result-screen" class="hidden p-8 sm:p-12 text-center">
+            <h2 class="text-3xl font-bold text-slate-900 mb-2">Kuis Selesai!</h2>
+            <p class="text-slate-600 mb-8 text-lg">Berikut adalah hasil akhir Anda.</p>
+            
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-8 mb-8 inline-block shadow-sm">
+                <div class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Skor Anda</div>
+                <div class="text-5xl font-bold text-blue-600">
+                    <span id="score-text">0</span><span class="text-2xl text-slate-400">/5</span>
+                </div>
+                <div id="result-message" class="mt-4 font-medium text-slate-700">
+                    <!-- Custom message based on score -->
+                </div>
+            </div>
+
+            <div>
+                <button onclick="restartQuiz()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-4 focus:ring-slate-300 text-lg">
+                    Ulangi Kuis
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Pada metode pendapatan, besar pendapatan nasional suatu negara akan sama dengan ....",
+                options: [
+                    "jumlah produksi ditambah upah",
+                    "jumlah investasi masyarakat",
+                    "jumlah konsumsi dan investasi",
+                    "jumlah nilai tambah produksi dari barang dan jasa",
+                    "penjumlahan sewa, bunga, upah dan laba"
+                ],
+                correctIndex: 4
+            },
+            {
+                question: "Salah satu indikator ekonomi makro yang dapat digunakan sebagai alat ukur perkembangan dan struktur pada pembangunan suatu daerah adalah ....",
+                options: [
+                    "pendapatan nasional harga konstan",
+                    "anggaran pendapatan dan belanja daerah",
+                    "produk domestik regional bruto",
+                    "pendapatan domestik bruto",
+                    "pendapatan per kapita"
+                ],
+                correctIndex: 2
+            },
+            {
+                question: "Nilai koefisien Gini yang menunjukkan tingkat ketimpangan moderat pada distribusi pendapatan adalah ....",
+                options: [
+                    "0,4–0,5",
+                    "<0,4",
+                    ">0,5",
+                    "0,5–0,6",
+                    ">0,6"
+                ],
+                correctIndex: 0
+            },
+            {
+                question: "Nilai barang dan jasa yang dihasilkan daerah tertentu, seperti kabupaten atau provinsi dalam satu tahun disebut ....",
+                options: [
+                    "produk domestik bruto",
+                    "produk nasional bruto",
+                    "produk domestik regional bruto",
+                    "PDB harga berlaku",
+                    "PDB harga konstan"
+                ],
+                correctIndex: 2
+            },
+            {
+                question: "Data untuk perhitungan pendapatan nasional sebagai berikut (dalam miliar):<br><br>Konsumsi: Rp37.500,00<br>Investasi: Rp46.400,00<br>Pengeluaran pemerintah: Rp21.500,00<br>Ekspor: Rp14.500,00<br>Impor: Rp6.400,00<br><br>Besar pendapatan nasional dengan pendekatan pengeluaran adalah ....",
+                options: [
+                    "Rp109.000,00 miliar",
+                    "Rp110.500,00 miliar",
+                    "Rp111.500,00 miliar",
+                    "Rp112.500,00 miliar",
+                    "Rp113.500,00 miliar"
+                ],
+                correctIndex: 4
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextButton = document.getElementById('next-button');
+        const progressText = document.getElementById('progress-text');
+        const progressFill = document.getElementById('progress-fill');
+        const feedbackText = document.getElementById('feedback-text');
+        const scoreText = document.getElementById('score-text');
+        const resultMessage = document.getElementById('result-message');
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            welcomeScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const currentQuestion = questions[currentQuestionIndex];
+            
+            // Update Progress
+            progressText.innerText = `Pertanyaan ${currentQuestionIndex + 1} dari ${questions.length}`;
+            progressFill.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            
+            // Set Question Text
+            questionText.innerHTML = currentQuestion.question;
+            
+            // Clear Options and Feedback
+            optionsContainer.innerHTML = '';
+            feedbackText.style.opacity = '0';
+            feedbackText.className = 'font-semibold text-lg opacity-0 transition-opacity duration-300';
+            nextButton.classList.add('hidden');
+
+            // Generate Option Buttons
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                // Base classes for unselected option
+                button.className = 'option-btn w-full text-left p-4 rounded-xl border-2 border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 text-slate-700 font-medium focus:outline-none';
+                button.innerHTML = option;
+                button.onclick = () => selectOption(index, button);
+                optionsContainer.appendChild(button);
+            });
+
+            // Re-trigger animation
+            quizScreen.classList.remove('fade-in');
+            void quizScreen.offsetWidth; // trigger reflow
+            quizScreen.classList.add('fade-in');
+        }
+
+        function selectOption(selectedIndex, selectedElement) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const currentQuestion = questions[currentQuestionIndex];
+            const isCorrect = selectedIndex === currentQuestion.correctIndex;
+            const allButtons = document.querySelectorAll('.option-btn');
+
+            // Disable all buttons and show styling
+            allButtons.forEach((btn, index) => {
+                btn.onclick = null; // Remove listener
+                btn.classList.remove('hover:border-blue-300', 'hover:bg-blue-50');
+                
+                if (index === currentQuestion.correctIndex) {
+                    // Highlight correct answer
+                    btn.classList.remove('border-slate-200', 'bg-white');
+                    btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                } else if (index === selectedIndex && !isCorrect) {
+                    // Highlight wrong answer selected by user
+                    btn.classList.remove('border-slate-200', 'bg-white');
+                    btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+                } else {
+                    // Fade out other options
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            });
+
+            // Update Score and Feedback Text
+            if (isCorrect) {
+                score++;
+                feedbackText.innerText = "Jawaban Benar!";
+                feedbackText.classList.add('text-green-600');
+            } else {
+                feedbackText.innerText = "Jawaban Salah.";
+                feedbackText.classList.add('text-red-600');
+            }
+            feedbackText.style.opacity = '1';
+
+            // Show Next Button
+            if (currentQuestionIndex === questions.length - 1) {
+                nextButton.innerText = "Lihat Hasil";
+            } else {
+                nextButton.innerText = "Selanjutnya";
+            }
+            nextButton.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            
+            scoreText.innerText = score;
+            
+            if (score === questions.length) {
+                resultMessage.innerText = "Luar biasa! Pemahaman Anda sangat sempurna.";
+            } else if (score >= questions.length / 2) {
+                resultMessage.innerText = "Kerja bagus! Anda memiliki pemahaman yang baik.";
+            } else {
+                resultMessage.innerText = "Terus belajar! Coba lagi untuk hasil yang lebih baik.";
+            }
+
+            // Trigger animation
+            resultScreen.classList.remove('fade-in');
+            void resultScreen.offsetWidth;
+            resultScreen.classList.add('fade-in');
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+    </script>
+</body>
+</html>
